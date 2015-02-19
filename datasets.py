@@ -158,6 +158,9 @@ def normalize_dataframe(dataframe, cols=None, binvals=None):
     for col in cols:
         # Check if binary
         uniques = dataframe[col].unique()
+        # Dont count nans as unique values
+        nans = pd.isnull(uniques)
+        uniques = uniques[~nans]
 
         if len(uniques) == 2:
             # Binary, force into 0 and 1
@@ -168,7 +171,7 @@ def normalize_dataframe(dataframe, cols=None, binvals=None):
             dataframe.loc[maxs, col] = binvals[1]
         else:
             # Can still be "binary"
-            if len(uniques) == 1 and (uniques[0] == 0 or uniques[0] == 1):
+            if len(uniques) == 1 and uniques[0] in [0, 1]:
                 # Yes, single binary value
                 continue
 
@@ -232,7 +235,7 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
         normalize_dataframe(_d, cols=[timecol])
 
     # Fill missing values with mean/median
-    #replace_dataframe_nans(_d, binary_median=False)
+    replace_dataframe_nans(_d, binary_median=False)
 
     E = _d[eventcol]
     if prints:
