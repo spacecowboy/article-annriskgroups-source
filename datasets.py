@@ -28,17 +28,17 @@ _breasttest = dict(filename=os.path.expanduser(_breasttestpath),
                    timecol='time_10y',
                    eventcol='event_10y',
                    xcols=['age', 'lymfmet', 'log(1+lymfmet)', 'n_pos',
-                         'tumsize', 'log(1+er_cyt)', 'log(1+pgr_cyt)',
-                         'pgr_cyt_pos', 'er_cyt_pos', 'size_gt_20',
-                         'er_cyt', 'pgr_cyt'])
+                          'tumsize', 'log(1+er_cyt)', 'log(1+pgr_cyt)',
+                          'pgr_cyt_pos', 'er_cyt_pos', 'size_gt_20',
+                          'er_cyt', 'pgr_cyt'])
 datasets.append(("breast_test", _breasttest))
 
 
 _mayopath = "~/DataSets/vanBelle2009/Therneau2000/data_with_event_only_randomized.csv"
 _mayo = dict(filename=os.path.expanduser(_mayopath),
-                 timecol='time',
-                 eventcol='event',
-                 xcols="trt,age,sex(m=1),ascites,hepato,spiders,edema,bili,chol".split(","))
+             timecol='time',
+             eventcol='event',
+             xcols="trt,age,sex(m=1),ascites,hepato,spiders,edema,bili,chol".split(","))
 datasets.append(("mayo", _mayo))
 
 
@@ -187,7 +187,11 @@ def normalize_dataframe(dataframe, cols=None, binvals=None):
 
 def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
              prints=False, splitcols=None):
-    '''Parse the data'''
+    '''
+    Parse the data.
+
+    Returns a DataFrame where the first two columns are always (time, event).
+    '''
     if not isinstance(filename, list):
         filename = [filename]
 
@@ -196,14 +200,6 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
     for fname in filename:
         _dtemp = pd.read_csv(fname, sep=None, engine='python')
 
-        # Find columns to drop
-#        dropcols = []
-#        for col in _dtemp.columns:
-#            if col not in (list(xcols) + [timecol, eventcol]):
-#                dropcols.append(col)
-        # Drop the columns
-#        if len(dropcols) > 0:
-#            _dtemp.drop(dropcols, axis=1, inplace=True)
         # Make sure order is correct and other columns are dropped
         _dtemp = _dtemp.reindex(columns=([timecol, eventcol] + list(xcols)))
 
@@ -250,7 +246,6 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
         print("Censored count:", len(_d) - np.sum(E), "/", len(_d),
               " = {:.2f}%".format(100*(len(_d) - np.sum(E))/len(_d)))
         print("Final columns:", list(_d.columns))
-    #return np.array(_d[xcols]), np.column_stack((_d[timecol], E))
     return _d
 
 
