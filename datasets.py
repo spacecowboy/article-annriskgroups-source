@@ -197,13 +197,15 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
         _dtemp = pd.read_csv(fname, sep=None, engine='python')
 
         # Find columns to drop
-        dropcols = []
-        for col in _dtemp.columns:
-            if col not in (list(xcols) + [timecol, eventcol]):
-                dropcols.append(col)
+#        dropcols = []
+#        for col in _dtemp.columns:
+#            if col not in (list(xcols) + [timecol, eventcol]):
+#                dropcols.append(col)
         # Drop the columns
-        if len(dropcols) > 0:
-            _dtemp.drop(dropcols, axis=1, inplace=True)
+#        if len(dropcols) > 0:
+#            _dtemp.drop(dropcols, axis=1, inplace=True)
+        # Make sure order is correct and other columns are dropped
+        _dtemp = _dtemp.reindex(columns=([timecol, eventcol] + list(xcols)))
 
         if _d is None:
             _d = _dtemp
