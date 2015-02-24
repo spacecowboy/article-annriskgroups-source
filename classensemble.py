@@ -4,39 +4,47 @@ Utility methods for doing survival group ensembles
 '''
 from ann.ensemble import Ensemble
 import numpy as np
+import pandas as pd
 
 
-def ordered_bagging(data, count=None):
+def ordered_bagging(length, count=None):
     '''Samples len elements (with replacement) from data and returns a view of
     those elements. Note that the original sorting is respected. An example
     is original list [0, 1, 2, 3, 4, 5], and result [0, 0, 1, 4, 5, 5]. Note
     the final result maintains the same sorting.
     '''
     if count is None:
-        count = len(data)
-    r = np.random.randint(0, len(data), count)
+        count = length
+    r = np.random.randint(0, length, count)
     r.sort()  # sorts inplace
-    return data[r]
+    return r
 
 
 class ClassEnsemble(Ensemble):
-    def __init__(self, high_nets, low_nets):
+    def __init__(self, high_nets=None, low_nets=None, netgen=None):
         '''
-        Arguments:
+        Arguments, either one of these sets:
           high_nets, low_nets - lists of networks which will find high risk
                                 groups and low risk groups respectively.
+          netgen - A function that generates the previous two lists, with fresh networks.
         '''
-        self.networks = high_nets + low_nets
-        self.high_nets = high_nets
-        self.low_nets = low_nets
+        self.netgen = netgen
+        if not high_nets or not low_nets:
+            self.networks = []
+            self.high_nets = []
+            self.low_nets = []
+        else:
+            self.networks = high_nets + low_nets
+            self.high_nets = high_nets
+            self.low_nets = low_nets
 
-        if len(high_nets) % 2 == 0 or len(low_nets) % 2 == 0:
-            raise ValueError("Please supply an odd number of each network type to resolve tie issues.")
-        if len(high_nets) != len(low_nets):
-            raise ValueError("Please supply an equal amount of each network")
+            if len(high_nets) % 2 == 0 or len(low_nets) % 2 == 0:
+                raise ValueError("Please supply an odd number of each network type to resolve tie issues.")
+            if len(high_nets) != len(low_nets):
+                raise ValueError("Please supply an equal amount of each network")
 
-        if 2 != self.networks[0].output_count:
-            raise ValueError("This class will not do what you think if networks don't have 2 output neurons.")
+            if 2 != self.networks[0].output_count:
+                raise ValueError("This class will not do what you think if networks don't have 2 output neurons.")
 
     def predict_class(self, indata):
         '''
@@ -98,16 +106,46 @@ class ClassEnsemble(Ensemble):
         '''
         Learn using ordered bagging (maintains sort order).
         Set limit to train on smaller bagging subsets.
+        Data is sorted before training.
         '''
+        # First make sure data is sorted
+        asc = dataout[:, 0].argsort()
         for net in self.networks:
             # Create new data using bagging. Combine the data into one array
-            baggeddata = ordered_bagging(np.column_stack([datain, dataout]),
-                                         count=limit)
-            net.learn(baggeddata[:, :-2], baggeddata[:, -2:])
+            bag = ordered_bagging(datain.shape[0], count=limit)
+            net.learn(datain[asc][bag], dataout[asc][bag])
 
-    def label_data(self, data_in):
+    def fit(self, df, duration_col, event_col):
         '''
-        Returns the group labels of each input pattern in data_in:
+        Same as learn, but instead conforms to the interface defined by
+        Lifelines and accepts a data frame as the data. Also generates
+        new networks using self.netgen is it was defined.
+        '''
+        if self.netgen is not None:
+            self.high_nets, self.low_nets = self.netgen(df)
+            self.networks = self.high_nets + self.low_nets
+        # Save columns for prediction later
+        self.x_cols = df.columns - [duration_col, event_col]
+
+        self.learn(df[self.x_cols].values,
+                   df[[duration_col, event_col]].values)
+
+    def predict_classes(self, df):
+        '''
+        Predict the classes of an entire DateFrame.
+
+        Returns a DataFrame.
+        '''
+        labels, m = self.label_data(df)
+        res = pd.DataFrame(index=df.index, columns=['group'])
+        res.iloc[:, 0] = labels
+        return res
+
+    def label_data(self, df):
+        '''
+        Returns the group labels of each input pattern in the DataFrame.
+        It must be a dataframe to guarantee that the same column ordering
+        is used.
 
         Returns:
           (grouplabels, members)
@@ -115,14 +153,14 @@ class ClassEnsemble(Ensemble):
         grouplabels = []
         members = {}
 
-        for idx, tin in enumerate(data_in):
+        for idx, tin in enumerate(df[self.x_cols].values):
             label = self.predict_class(tin)
             grouplabels.append(label)
 
             # Add index to member list
             if label not in members:
                 members[label] = []
-        members[label].append(idx)
+            members[label].append(idx)
 
         grouplabels = np.array(grouplabels)
 

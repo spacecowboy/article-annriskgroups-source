@@ -210,6 +210,13 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
 
     inshape = _d.shape
 
+    # Rename columns with parenthesis in them - R doesn't like that
+    c = _d.columns.values
+    for i, name in enumerate(c):
+        if '(' in name:
+            c[i] = name[:name.find('(')]
+    _d.columns = c
+
     # Split columns into binary
     # Hard code some data set things
     if 'ph.ecog' in xcols:
