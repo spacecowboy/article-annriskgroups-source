@@ -214,7 +214,7 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
     c = _d.columns.values
     for i, name in enumerate(c):
         if '(' in name:
-            c[i] = name[:name.find('(')]
+            c[i] = name.replace('(', '_').replace(')', '_')
     _d.columns = c
 
     # Split columns into binary
