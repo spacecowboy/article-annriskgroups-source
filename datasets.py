@@ -213,8 +213,8 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
     # Rename columns with parenthesis in them - R doesn't like that
     c = _d.columns.values
     for i, name in enumerate(c):
-        if '(' in name:
-            c[i] = name.replace('(', '_').replace(')', '_')
+        if '(' in name or ')' in name or '=' in name:
+            c[i] = name.replace('(', '').replace(')', '').replace('=', '')
     _d.columns = c
 
     # Split columns into binary
