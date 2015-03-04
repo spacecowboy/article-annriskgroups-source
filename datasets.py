@@ -7,68 +7,40 @@ import pandas as pd
 import numpy as np
 import os
 
-# datasets to work on
-# To handle each data set I need: filename, timecol, eventcol, xcols
-# This is thus a list of tuples: (name, dict)
-datasets = []
+# Each data set defines: filename, timecol, eventcol, xcols
 
-_breasttrnpath = "~/DataSets/breast_cancer_1/n4369_utanmalmo_trainingtwothirds.csv"
-_breasttrn = dict(filename=os.path.expanduser(_breasttrnpath),
-                  timecol='time_10y',
-                  eventcol='event_10y',
-                  xcols=['age', 'lymfmet', 'log(1+lymfmet)', 'n_pos',
-                         'tumsize', 'log(1+er_cyt)', 'log(1+pgr_cyt)',
-                         'pgr_cyt_pos', 'er_cyt_pos', 'size_gt_20',
-                         'er_cyt', 'pgr_cyt'])
-datasets.append(("breast_trn", _breasttrn))
+_pbc = dict(filename="data/pbc.csv",
+            timecol="time",
+            eventcol="status",
+            xcols=["trt", "age", "sex", "ascites", "hepato", "spiders",
+                   "edema", "bili", "chol", "albumin", "copper", "alk.phos",
+                   "ast", "trig", "platelet", "protime", "stage"])
 
-
-_breasttestpath = "~/DataSets/breast_cancer_1/n4369_utanmalmo_targetthird.csv"
-_breasttest = dict(filename=os.path.expanduser(_breasttestpath),
-                   timecol='time_10y',
-                   eventcol='event_10y',
-                   xcols=['age', 'lymfmet', 'log(1+lymfmet)', 'n_pos',
-                          'tumsize', 'log(1+er_cyt)', 'log(1+pgr_cyt)',
-                          'pgr_cyt_pos', 'er_cyt_pos', 'size_gt_20',
-                          'er_cyt', 'pgr_cyt'])
-datasets.append(("breast_test", _breasttest))
-
-
-_mayopath = "~/DataSets/vanBelle2009/Therneau2000/data_with_event_only_randomized.csv"
-_mayo = dict(filename=os.path.expanduser(_mayopath),
-             timecol='time',
-             eventcol='event',
-             xcols="trt,age,sex(m=1),ascites,hepato,spiders,edema,bili,chol".split(","))
-datasets.append(("mayo", _mayo))
-
-
-_lungpath = "~/DataSets/vanBelle2009/Therneau2000-MLC/data-full.csv"
-_lung = dict(filename=os.path.expanduser(_lungpath),
+_lung = dict(filename="data/lung.csv",
              timecol="time",
              eventcol="status",
-             xcols="age,sex,ph.ecog,ph.karno,pat.karno,meal.cal,wt.loss".split(","))
-datasets.append(("lung", _lung))
+             xcols=["age", "sex", "ph.ecog", "ph.karno",
+                    "pat.karno", "meal.cal", "wt.loss"])
+
+_nwtco = dict(filename="data/nwtco.csv",
+              timecol="edrel",
+              eventcol="rel",
+              xcols=["instit", "histol", "age", "stage"])
+
+_flchain = dict(filename="data/flchain.csv",
+                timecol="futime",
+                eventcol="death",
+                xcols=["age", "sex", "kappa", "lambda",
+                       "flc.grp", "creatinine", "mgus"])
+
+_colon = dict(filename="data/colon.csv",
+              timecol="time",
+              eventcol="status",
+              xcols=["rx", "sex", "age", "obstruct", "perfor", "adhere",
+                     "nodes", "differ", "extent", "surg", "node4"])
 
 
-_veteranpath = "~/DataSets/vanBelle2009/Kalbfleish2002/data.csv"
-_veteran = dict(filename=os.path.expanduser(_veteranpath),
-                timecol="time",
-                eventcol="event",
-                xcols="treatment,celltype,karnofsky,diagmonths,age,prior".split(","))
-datasets.append(("veteran", _veteran))
-
-
-_transplantpath1 = "~/DataSets/heart_transplant/final_normalized_develop.csv"
-_transplantpath2 = "~/DataSets/heart_transplant/final_normalized_interntest.csv"
-_transplant = dict(filename=[os.path.expanduser(_transplantpath1),
-                             os.path.expanduser(_transplantpath2)],
-                   timecol="survdays",
-                   eventcol="nonsurvivor",
-                       xcols="donage;recageyear;donsex;recsex;recdonheightmatch;recdonweightmatch;recpvr;recweightkg;recheighthcm;recobstpulmdisease;recsmokehist;rechypertension;recvasculardisease;reccvi;recstroke;recdiabetes;recinfections2weeks;recpepticulcer;recdialysis;recunstableangina;recdefibrillator;recantiarrhythmics;recamiodarone;reccreatininemostrecent;recbilirubin;recalbumin;recpasys;recinotropsup;recventilator;recvad;rececmo;reciabp;recpriortx;recpriorcardsurg;reccmvpreop;recmalignpretx;recworkincometx;recexercise_o2;recprevtxfus;recpra10;mmhla_a;mmhla_b;mmhla_dr;ischemictimeminutes;doncmvresult;donhypertension;dondiabetes;donlvef;donbilirubin;doncreatinine;donbun;donsmokehist;donalcoholhist;doncocainehist;donweight;donheight;diagn_CAD;diagn_Cardiomyopathy;diagn_Congenital;diagn_Graftfailure;diagn_Misc;diagn_Valve;donbldgroup_A;donbldgroup_AB;donbldgroup_B;donbldgroup_O;dondeath_Head trauma;dondeath_Other;dondeath_Stroke;recbldgroup_A;recbldgroup_AB;recbldgroup_B;recbldgroup_O;recmedcond_Home;recmedcond_Hospital;recmedcond_ICU;txyear_1991-1995;txyear_1996-2000;txyear_2001-2005;txyear_2006-2010".split(";"))
-datasets.append(("transplant", _transplant))
-
-
-def split_dataframe_class_columns(df, upper_lim=5, lower_lim=3, int_only=True):
+def split_dataframe_class_columns(df, cols, upper_lim=5, lower_lim=3, no_floats=True):
     '''
     Splits columns of a dataframe where rows can only take a limited
     amount of valid values, into seperate columns
@@ -77,9 +49,10 @@ def split_dataframe_class_columns(df, upper_lim=5, lower_lim=3, int_only=True):
 
     Parameters:
     - df, pandas dataframe to work with
+    - cols, eligible columns to split
     - upper_lim, only consider columns with less unique values (default 5)
     - lower_lim, only consider equal or more unique values (default 3)
-    - int_only, if True only include columns with all integers
+    - no_floats, if True exclude columns containing decimal values
 
     Returns:
     A new pandas dataframe with the same columns as df, except those columns
@@ -94,8 +67,10 @@ def split_dataframe_class_columns(df, upper_lim=5, lower_lim=3, int_only=True):
         nans = pd.isnull(uniques)
         uniques = uniques[~nans]
         # If class variable
-        if ((len(uniques) >= lower_lim and len(uniques) < upper_lim) and
-            (not int_only or np.all(uniques.astype(int) == uniques))):
+        if (col in cols and
+            (len(uniques) >= lower_lim and len(uniques) < upper_lim) and
+            (not no_floats or np.all(uniques.astype(str) == uniques)
+             or np.all(uniques.astype(int) == uniques))):
             # Split it, one col for each unique value
             for val in uniques:
                 # A human-readable name
@@ -200,6 +175,27 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
     for fname in filename:
         _dtemp = pd.read_csv(fname, sep=None, engine='python')
 
+        if 'pbc' in fname:
+            # For pbc/mayo, only use first 312 entries
+            _dtemp = _dtemp.reindex(np.arange(312))
+            # Change status to binary
+            _dtemp.loc[_dtemp[eventcol] < 2, eventcol] = 0
+            _dtemp.loc[_dtemp[eventcol] == 2, eventcol] = 1
+            # Sex to numbers
+            _dtemp.loc[_dtemp['sex'] == 'f', 'sex'] = 0
+            _dtemp.loc[_dtemp['sex'] == 'm', 'sex'] = 1
+        elif 'lung' in fname:
+            # Status is listed as 1=cens, 2=death
+            _dtemp.loc[_dtemp[eventcol] < 2, eventcol] = 0
+            _dtemp.loc[_dtemp[eventcol] == 2, eventcol] = 1
+        elif 'flchain' in fname:
+            # Sex variable to numbers
+            _dtemp.loc[_dtemp['sex'] == 'F', 'sex'] = 0
+            _dtemp.loc[_dtemp['sex'] == 'M', 'sex'] = 1
+        elif 'colon' in fname:
+            # Filter on recurrence, ignore death entries
+            _dtemp = _dtemp.reindex(_dtemp.loc[_dtemp['etype'] == 1].index)
+
         # Make sure order is correct and other columns are dropped
         _dtemp = _dtemp.reindex(columns=([timecol, eventcol] + list(xcols)))
 
@@ -218,15 +214,11 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
     _d.columns = c
 
     # Split columns into binary
-    # Hard code some data set things
-    if 'ph.ecog' in xcols:
-        # Don't split lung data set
-        pass
-    elif splitcols is None:
+    if splitcols is None:
         # Split all appropriate ones
-        _d = split_dataframe_class_columns(_d)
+        _d = split_dataframe_class_columns(_d, cols=_d.columns)
     elif len(splitcols) > 0:
-        _d[splitcols] = split_dataframe_class_columns(_d[splitcols])
+        _d = split_dataframe_class_columns(_d, cols=splitcols)
 
     # Include new columns
     xcols = list(_d.columns)
@@ -256,31 +248,24 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
     return _d
 
 
-def get_mayo(prints=False, norm_in=False, norm_out=False):
+def get_pbc(prints=False, norm_in=False, norm_out=False):
+    # Do not split columns in this dataset
     return get_data(prints=prints, norm_in=norm_in, norm_out=norm_out,
-                    **_mayo)
+                    splitcols=[], **_pbc)
 
 
 def get_lung(prints=False, norm_in=False, norm_out=False):
+    # Do not split columns in this dataset
     return get_data(prints=prints, norm_in=norm_in, norm_out=norm_out,
-                    **_lung)
+                    splitcols=[], **_lung)
 
 
-def get_veteran(prints=False, norm_in=False, norm_out=False):
+def get_nwtco(prints=False, norm_in=False, norm_out=False):
     return get_data(prints=prints, norm_in=norm_in, norm_out=norm_out,
-                    **_veteran)
+                    **_nwtco)
 
 
-def get_transplant(prints=False, norm_in=False, norm_out=False):
+def get_colon(prints=False, norm_in=False, norm_out=False):
+    # Only split rx
     return get_data(prints=prints, norm_in=norm_in, norm_out=norm_out,
-                    **_transplant)
-
-
-def get_breasttrn(prints=False, norm_in=False, norm_out=False):
-    return get_data(prints=prints, norm_in=norm_in, norm_out=norm_out,
-                    **_breasttrn)
-
-
-def get_breasttest(prints=False, norm_in=False, norm_out=False):
-    return get_data(prints=prints, norm_in=norm_in, norm_out=norm_out,
-                    **_breasttest)
+                    splitcols=['rx'], **_colon)
