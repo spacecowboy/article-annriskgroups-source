@@ -161,7 +161,7 @@ def normalize_dataframe(dataframe, cols=None, binvals=None):
 
 
 def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
-             prints=False, splitcols=None):
+             prints=False, splitcols=None, training=True, setcol='set'):
     '''
     Parse the data.
 
@@ -196,6 +196,12 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
             # Filter on recurrence, ignore death entries
             _dtemp = _dtemp.reindex(_dtemp.loc[_dtemp['etype'] == 1].index)
 
+        # Will use this after normalization
+        if training:
+            which = (_dtemp[setcol] == 'training')
+        else:
+            which = (_dtemp[setcol] == 'testing')
+
         # Make sure order is correct and other columns are dropped
         _dtemp = _dtemp.reindex(columns=([timecol, eventcol] + list(xcols)))
 
@@ -206,19 +212,19 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
 
     inshape = _d.shape
 
-    # Rename columns with parenthesis in them - R doesn't like that
-    c = _d.columns.values
-    for i, name in enumerate(c):
-        if '(' in name or ')' in name or '=' in name:
-            c[i] = name.replace('(', '').replace(')', '').replace('=', '')
-    _d.columns = c
-
     # Split columns into binary
     if splitcols is None:
         # Split all appropriate ones
         _d = split_dataframe_class_columns(_d, cols=_d.columns)
     elif len(splitcols) > 0:
         _d = split_dataframe_class_columns(_d, cols=splitcols)
+
+    # Rename columns with parenthesis in them - R doesn't like that
+    c = list(_d.columns)
+    for i, name in enumerate(c):
+        if '(' in name or ')' in name or '=' in name or '+' in name:
+            c[i] = name.replace('(', '').replace(')', '').replace('=', '').replace('+', '')
+    _d.columns = c
 
     # Include new columns
     xcols = list(_d.columns)
@@ -234,6 +240,9 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
     # Fill missing values with mean/median
     replace_dataframe_nans(_d, binary_median=False)
 
+    # Return only training/testing subset
+    _d = _d.reindex(_d.loc[which].index)
+
     E = _d[eventcol]
     if prints:
         outshape = _d.shape
@@ -245,27 +254,33 @@ def get_data(filename, timecol, eventcol, xcols, norm_in=True, norm_out=True,
         print("Censored count:", len(_d) - np.sum(E), "/", len(_d),
               " = {:.2f}%".format(100*(len(_d) - np.sum(E))/len(_d)))
         print("Final columns:", list(_d.columns))
-    return _d
+    return _d.astype(float)
 
 
-def get_pbc(prints=False, norm_in=False, norm_out=False):
+def get_pbc(prints=False, norm_in=False, norm_out=False, training=True):
     # Do not split columns in this dataset
     return get_data(prints=prints, norm_in=norm_in, norm_out=norm_out,
-                    splitcols=[], **_pbc)
+                    splitcols=[], training=training, **_pbc)
 
 
-def get_lung(prints=False, norm_in=False, norm_out=False):
+def get_lung(prints=False, norm_in=False, norm_out=False, training=True):
     # Do not split columns in this dataset
     return get_data(prints=prints, norm_in=norm_in, norm_out=norm_out,
-                    splitcols=[], **_lung)
+                    splitcols=[], training=training, **_lung)
 
 
-def get_nwtco(prints=False, norm_in=False, norm_out=False):
+def get_nwtco(prints=False, norm_in=False, norm_out=False, training=True):
     return get_data(prints=prints, norm_in=norm_in, norm_out=norm_out,
-                    **_nwtco)
+                    training=training, **_nwtco)
 
 
-def get_colon(prints=False, norm_in=False, norm_out=False):
+def get_colon(prints=False, norm_in=False, norm_out=False, training=True):
     # Only split rx
     return get_data(prints=prints, norm_in=norm_in, norm_out=norm_out,
-                    splitcols=['rx'], **_colon)
+                    splitcols=['rx'], training=training, **_colon)
+
+
+def get_flchain(prints=False, norm_in=False, norm_out=False, training=True):
+    # Only split rx
+    return get_data(prints=prints, norm_in=norm_in, norm_out=norm_out,
+                    splitcols=None, training=training, **_flchain)
