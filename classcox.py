@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
-from lifelines.estimation import CoxPHFitter
+#from lifelines.estimation import CoxPHFitter
+from pysurvival.cox import CoxModel
 
 
-class CoxClasser(CoxPHFitter):
+class CoxClasser(CoxModel):
     def __init__(self, highlim=75, lowlim=25):
         '''
         A Cox model which outputs the class of the sample:
@@ -18,7 +19,8 @@ class CoxClasser(CoxPHFitter):
         res = super().fit(df, duration_col, event_col, *args, **kwargs)
 
         # Save the cut-offs for quartiles
-        preds = self.predict_partial_hazard(df).values.ravel()
+        #preds = self.predict_partial_hazard(df).values.ravel()
+        preds = self.predict(df).ravel()
 
         self.highcut = np.percentile(preds, self.highlim)
         self.lowcut = np.percentile(preds, self.lowlim)
@@ -31,7 +33,8 @@ class CoxClasser(CoxPHFitter):
 
         Returns a DataFrame.
         '''
-        preds = self.predict_partial_hazard(df).values.ravel()
+        #preds = self.predict_partial_hazard(df).values.ravel()
+        preds = self.predict(df).ravel()
         # Remember that this is hazard and not survival
         low = (preds < self.lowcut)
         high = (preds > self.highcut)

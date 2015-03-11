@@ -2,6 +2,51 @@
 import numpy as np
 
 
+def surv_area(durations, events=None, absolute=False):
+    '''
+    Parameters:
+    durations - array of event times (must be greater than zero)
+    events - array of event indicators (1/True for event, 0/False for censored)
+    absolute - if True, returns the actual area. Otherwise, a relative value
+               between 0 and 1
+
+    Returns:
+    area - The area under the survival curve
+    '''
+    if events is None:
+        events = np.ones_like(durations, dtype=bool)
+
+    events = events.astype(bool)
+
+    # Unique event times
+    TU = np.sort(np.unique(durations[events]))
+
+    # Starting values
+    S = 1.0
+    A = 0.0
+    p = 0
+    for t in TU:
+        # Add box to area
+        A += S * (t - p)
+
+        # People at risk
+        R = np.sum(durations >= t)
+        # Deaths between previous and now
+        deaths = np.sum(durations[events] == t)
+
+        # Update survival
+        S *= (R - deaths) / R
+        p = t
+
+    # If we have censored beyond last event
+    A += S * (np.max(durations) - p)
+
+    if not absolute:
+        A /= np.max(durations)
+
+    return A
+
+
 def k_fold_cross_validation(fitters, df, duration_col, event_col=None,
                             k=5, evaluation_measure=None, predictor="predict_median",
                             predictor_kwargs={}):
@@ -27,13 +72,14 @@ def k_fold_cross_validation(fitters, df, duration_col, event_col=None,
     n, d = df.shape
     # Each fitter has its own scores
     fitterscores = [[] for _ in fitters]
-    df = df.copy()
 
     if event_col is None:
         event_col = 'E'
         df[event_col] = 1.
 
-    df = df.reindex(np.random.permutation(df.index)).sort(event_col)
+    # reindex returns a copy
+    df = df.reindex(np.random.permutation(df.index))
+    df.sort(event_col, inplace=True)
 
     assignments = np.array((n // k + 1) * list(range(1, k + 1)))
     assignments = assignments[:n]
