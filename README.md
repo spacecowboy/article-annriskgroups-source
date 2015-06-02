@@ -2,7 +2,49 @@
 
 and some text
 
-## Dependencies and required software
+## Experiment files
+
+The source is written in iPython Notebooks, and the easiest way to
+read them is using the excellent
+(nbviewer)[http://nbviewer.ipython.org/] service. Just click the links
+to each script to open them in the viewer directly.
+
+### Scripts with results relevant for the article
+
+- (AnnVariables.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/AnnVariables.ipynb]
+
+This is the script used to determine suitable parameters for the ANN
+and genetic algorithm. Repeated cross-validation is performed where in
+each repetition, a single variable is investigated.
+
+- (CrossVal.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/CrossVal.ipynb]
+
+Cross-validation script which produces figures 1-4.
+
+
+
+### Scripts relevant mostly for the development process
+
+- (AnnGroups.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/AnnGroups.ipynb]
+
+This script loads a data set, trains an ANN Riskgroup ensemble on it,
+and plots the resulting grouping. The script is a test/example, and is
+not relevant for the results reported.
+
+- CoxGroups.ipynb
+
+This seems to be broken...
+
+- (DataSetHistograms.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/DataSetHistograms.ipynb]
+
+Only loads the datasets and prints some info and plots some
+histograms. No direct relevance to the article results.
+
+### Data sets
+
+Mention something of the data sets
+
+## Dependencies and required software to run the scripts
 
 You will need **GCC-4.7 or higher**. The authors have only run the
 code on **Linux** (OpenSuse, Debian, Arch Linux) and while it might be
@@ -52,6 +94,8 @@ pip install git+https://github.com/spacecowboy/pysurvival-ann.git@981fb23
 ```
 
 You should now be able to view and even re-run the experimental files.
+
+**TODO** Also need pysurvival for Cox and Rpart, but that requires rpy2.
 
 ## Viewing the files
 
