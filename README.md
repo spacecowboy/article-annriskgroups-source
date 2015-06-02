@@ -11,25 +11,25 @@ to each script to open them in the viewer directly.
 
 ### Scripts with results relevant for the article
 
-- (AnnVariables.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/AnnVariables.ipynb]
+- [AnnVariables.ipynb](http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/AnnVariables.ipynb)
 
 This is the script used to determine suitable parameters for the ANN
 and genetic algorithm. Repeated cross-validation is performed where in
 each repetition, a single variable is investigated.
 
-- (CrossVal.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/CrossVal.ipynb]
+- [CrossVal.ipynb](http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/CrossVal.ipynb)
 
 Cross-validation script which produces figures 1-4.
 
-- (DataSetStratification.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/DataSetStratification.ipynb]
+- [DataSetStratification.ipynb](http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/DataSetStratification.ipynb)
 
 Code used to stratify data sets into training and test pieces.
 
-- (RPartVariables.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/RPartVariables.ipynb]
+- [RPartVariables.ipynb](http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/RPartVariables.ipynb)
 
 Script to compare different parameters for Rpart.
 
-- (TestData.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/TestData.ipynb]
+- [TestData.ipynb](http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/TestData.ipynb)
 
 Here all models are trained on the training data using the decided
 parameters, and then predicts their groupings on the test
@@ -37,7 +37,7 @@ data. Produces figure 5 and data for table 1.
 
 ### Scripts relevant mostly for the development process
 
-- (AnnGroups.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/AnnGroups.ipynb]
+- [AnnGroups.ipynb](http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/AnnGroups.ipynb)
 
 This script loads a data set, trains an ANN Riskgroup ensemble on it,
 and plots the resulting grouping. The script is a test/example, and is
@@ -47,7 +47,7 @@ not relevant for the results reported.
 
 This seems to be broken...
 
-- (DataSetHistograms.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/DataSetHistograms.ipynb]
+- [DataSetHistograms.ipynb](http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/DataSetHistograms.ipynb)
 
 Only loads the datasets and prints some info and plots some
 histograms. No direct relevance to the article results.
@@ -69,7 +69,7 @@ support or guarantees for them.
 
 The experiments are written in iPython Notebooks, and thus obviously
 requires Python. To setup a suitable Python environment it is recommended
-to use (Conda)[http://conda.pydata.org/miniconda.html] (with Python 3.4).
+to use [Conda](http://conda.pydata.org/miniconda.html) (with Python 3.4).
 
 Once *Conda* is installed, a new environment named `riskgroups` can be
 created as follows:
@@ -91,7 +91,7 @@ source activate riskgroups
 Final software will now be installed using *pip*.
 
 First is
-(Lifelines)[https://github.com/CamDavidsonPilon/lifelines.git], a
+[Lifelines](https://github.com/CamDavidsonPilon/lifelines.git), a
 survival analysis package for package (used here primarily for
 Kaplan-Meier plots).
 
