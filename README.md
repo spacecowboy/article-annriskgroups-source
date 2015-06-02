@@ -21,7 +21,19 @@ each repetition, a single variable is investigated.
 
 Cross-validation script which produces figures 1-4.
 
+- (DataSetStratification.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/DataSetStratification.ipynb]
 
+Code used to stratify data sets into training and test pieces.
+
+- (RPartVariables.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/RPartVariables.ipynb]
+
+Script to compare different parameters for Rpart.
+
+- (TestData.ipynb)[http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/TestData.ipynb]
+
+Here all models are trained on the training data using the decided
+parameters, and then predicts their groupings on the test
+data. Produces figure 5 and data for table 1.
 
 ### Scripts relevant mostly for the development process
 
@@ -39,6 +51,10 @@ This seems to be broken...
 
 Only loads the datasets and prints some info and plots some
 histograms. No direct relevance to the article results.
+
+- Untitled0.ipynb
+
+Should probably remove this...
 
 ### Data sets
 
