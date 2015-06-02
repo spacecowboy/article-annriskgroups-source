@@ -58,7 +58,18 @@ Should probably remove this...
 
 ### Data sets
 
-Mention something of the data sets
+The data sets are stored in the `data` folder. Each data set comes in
+two files, *data.csv* and *data_org.csv*. *data_org.csv* is the
+original file extracted from `R`'s `survival` package. *data.csv* has
+labels which classify each entry as being part of either the training
+set or the testing set.
+
+The file
+[datasets.py](https://github.com/spacecowboy/article-annriskgroups-source/blob/master/datasets.py)
+contain helper methods to load the files, fill missing values, and
+normalize covariates.
+
+**TODO some info about each data set individually**
 
 ## Dependencies and required software to run the scripts
 
@@ -99,7 +110,7 @@ Kaplan-Meier plots).
 pip install lifelines==0.7.0
 ```
 
-And last is the software necessary to run the neural networks
+Second is the software necessary to run the neural network
 experiments. Note that these are installed directly from github and
 have the specific commits (versions) specified.
 
@@ -109,35 +120,22 @@ pip install git+https://github.com/spacecowboy/pyplotthemes.git@9559f9b
 pip install git+https://github.com/spacecowboy/pysurvival-ann.git@981fb23
 ```
 
-You should now be able to view and even re-run the experimental files.
+Final step is to get the python wrappers around `R` to work
+properly. This can be often be problematic. To install `R` as a
+shared-library, see
+[pysurvival](https://github.com/spacecowboy/pysurvival). You also need
+the following packages available in in `R`:
 
-**TODO** Also need pysurvival for Cox and Rpart, but that requires rpy2.
+- [survival](http://cran.r-project.org/web/packages/survival/index.html)
+- [rpart](http://cran.r-project.org/web/packages/rpart/index.html)
 
-## Viewing the files
-
-The following versions were used to run the experiments (as reported
-by `pip freeze`):
+Once that is done however, all you should have to do is:
 
 ```
-ipython==2.3.1
-Jinja2==2.7.3
-jkutils==1.1
-lifelines==0.7.0.0
-MarkupSafe==0.23
-matplotlib==1.4.2
-numpy==1.9.1
-pandas==0.15.2
-py==1.4.26
-pyparsing==2.0.1
-pyplotthemes==0.1
-pysurvival==1.2
-pysurvival-ann==0.9
-pytest==2.6.4
-python-dateutil==2.1
-pytz==2014.9
-pyzmq==14.5.0
-rpy2==2.5.6
-scipy==0.15.1
-six==1.9.0
-tornado==4.0.2
+pip install rpy2==2.5.6
+pip install git+https://github.com/spacecowboy/pysurvival.git@c862d85
 ```
+
+You should now be able to view and even re-run the experimental
+files. Just run `ipython notebook` and open a notebook in the browser
+window that starts.
