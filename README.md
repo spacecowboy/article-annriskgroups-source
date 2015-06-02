@@ -6,10 +6,10 @@ This is the data, code, and results behind *Finding risk groups by
 
 The data (under the `data` directory) was originally published with the
 [survival](http://cran.r-project.org/web/packages/survival/index.html)
-and is available under the LGPL-2 license.
+package and is published under the LGPL-2 license.
 
-The code and all other files (in the root directory) are available
-under the GPL-3 license (see
+The code and all other files are available under the GPL-3 license
+(see
 [LICENSE](https://github.com/spacecowboy/article-annriskgroups-source/blob/master/LICENSE)).
 
 ## Experiment files
