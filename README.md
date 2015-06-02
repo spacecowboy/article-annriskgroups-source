@@ -1,6 +1,16 @@
-# Title
+# Finding risk groups by optimizing artificial neural networks on the area under the survival curve using genetic algorithms
 
-and some text
+This is the data, code, and results behind *Finding risk groups by
+  optimizing artificial neural networks on the area under the survival
+  curve using genetic algorithms* by Kalderstam J., Edén P., and Ohlsson M.
+
+The data (under the `data` directory) was originally published with the
+[survival](http://cran.r-project.org/web/packages/survival/index.html)
+and is available under the LGPL-2 license.
+
+The code and all other files (in the root directory) are available
+under the GPL-3 license (see
+[LICENSE](https://github.com/spacecowboy/article-annriskgroups-source/blob/master/LICENSE)).
 
 ## Experiment files
 
