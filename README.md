@@ -6,7 +6,7 @@ and some text
 
 The source is written in iPython Notebooks, and the easiest way to
 read them is using the excellent
-(nbviewer)[http://nbviewer.ipython.org/] service. Just click the links
+[nbviewer](http://nbviewer.ipython.org/) service. Just click the links
 to each script to open them in the viewer directly.
 
 ### Scripts with results relevant for the article
