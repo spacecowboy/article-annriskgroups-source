@@ -53,18 +53,11 @@ This script loads a data set, trains an ANN Riskgroup ensemble on it,
 and plots the resulting grouping. The script is a test/example, and is
 not relevant for the results reported.
 
-- CoxGroups.ipynb
-
-This seems to be broken...
-
 - [DataSetHistograms.ipynb](http://nbviewer.ipython.org/github/spacecowboy/article-annriskgroups-source/blob/master/DataSetHistograms.ipynb)
 
 Only loads the datasets and prints some info and plots some
 histograms. No direct relevance to the article results.
 
-- Untitled0.ipynb
-
-Should probably remove this...
 
 ### Data sets
 
