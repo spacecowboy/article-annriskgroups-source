@@ -75,7 +75,6 @@ set, please see the
 [survival package's manual](http://cran.r-project.org/web/packages/survival/survival.pdf)
 for more details on each data set.
 
-**TODO some info about each data set individually**
 
 #### colon
 
