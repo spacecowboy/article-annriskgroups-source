@@ -61,18 +61,75 @@ histograms. No direct relevance to the article results.
 
 ### Data sets
 
-The data sets are stored in the `data` folder. Each data set comes in
-two files, *data.csv* and *data_org.csv*. *data_org.csv* is the
-original file extracted from `R`'s `survival` package. *data.csv* has
-labels which classify each entry as being part of either the training
-set or the testing set.
-
 The file
 [datasets.py](https://github.com/spacecowboy/article-annriskgroups-source/blob/master/datasets.py)
 contain helper methods to load the files, fill missing values, and
 normalize covariates.
 
+The data sets are stored in the `data` folder. Each data set comes in
+two files, *data.csv* and *data_org.csv*. *data_org.csv* is the
+original file extracted from `R`'s `survival` package. *data.csv* has
+labels which classify each entry as being part of either the training
+set or the testing set. Here follows a brief description of each data
+set, please see the
+[survival package's manual](http://cran.r-project.org/web/packages/survival/survival.pdf)
+for more details on each data set.
+
 **TODO some info about each data set individually**
+
+#### colon
+
+One of the first successful trials of adjuvant chemotherapy
+for colon cancer. Consists of 929
+patients, 461 (50%) of which were censored before recurrence.  The
+target variable is *days until recurrence* and the 11 input
+features are: type of treatment, sex, age, obstruction of colon by
+tumor, perforation of colon, adherence to nearby organs, number of
+lymph nodes with detectable cancer, differentiation of tumor, extent
+of local spread, time from surgery to registration (short/long), and
+more than 4 positive lymph nodes (yes/no).
+
+#### flchain
+
+A study of the relationship between serum free light chain and
+mortality. In total 7871 patients are included with 5705 (72%)
+patients censored (still alive at last contact date). The target
+variable is *days until death* and the 7 input features are: age, sex,
+kappa portion, lambda portion, FLC group, serum creatine, and if
+diagnosed with monoclonal gammapothy.
+
+#### nwtco
+
+From the National Wilm's Tumor Study. 4028 patients where 3457 (86%)
+are censored before relapse. The target variable is *days to relapse*
+and it contains 4 input features: histology from local institution,
+histology from central lab, age, and disease stage.
+
+
+#### pbc
+
+A randomized trial in primary biliary cirrhosis (PBC) of the liver at
+the Mayo Clinic. The randomized trial consisted of 312 patients where
+187 (60%) were censored. The target variable is *days until death* and
+the 17 input features are: type of treatment, age, sex, presence of
+ascites, presence of hepatomegaly or enlarged liver, blood vessel
+malformations in the skin, presence of edema, serum bilirunbin, serum
+cholesterol, serum albumin, urine copper, alkaline phosphotase,
+aspartate aminotransferase, triglycerides, platelet count, blood
+clotting time, and histologic stage of disease.
+
+
+
+#### lung
+
+Originates from the North Central Cancer Treatment Group and consists
+of 228 patients with advanced lung cancer where 63 patients (28%) were
+censored. The target variable is *survival time in days* and the 7
+input features are: age, sex, ECOG performance score, Karnofsky
+performance score by physician, Karnofsky performance score by
+patient, calories consumed at meals, and weight loss in the last six
+months.
+
 
 ## Dependencies and required software to run the scripts
 
